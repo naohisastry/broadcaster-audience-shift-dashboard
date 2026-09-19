@@ -25,9 +25,9 @@
   - `DEI (Durée d’Écoute Individuelle)`: 4歳以上の全国民を対象とした1人1日あたり平均テレビ視聴時間（分）。
   - `総動画時間 (Global Video)`: 1日あたり4時間14分（254分）。うちリニア放送 61%（155分）、オンデマンド動画 39%（99分）。
 * **公表URL**:
-  - [Médiamétrie プレスリリース](https://www.mediametrie.fr/system/files/2025-01/2025%2001%2023%20CP%20L%27Ann%C3%A9e%20TV%202024.pdf)
+  - [Médiamétrie プレスリリース](https://www.mediametrie.fr/en)
   - [Stratégies: Temps de visionnage vidéo Médiamétrie](https://www.strategies.fr/actualites/medias/LQ5679021C/temps-de-visionnage-video-revolution-tnt-mesure-watch-les-essentiels-de-lannee-tv-selon-mediametrie.html)
-  - [Métropole Télévision (M6) 2025 Universal Registration Document (DEI掲載)](https://www.groupem6.fr/app/uploads/sites/3/2026/03/m6-document-d-enregistrement-universel-2025-opti-1.pdf)
+  - [Métropole Télévision (M6) 2025 Universal Registration Document (DEI掲載)](https://www.groupem6.fr/en/finance/)
 
 ---
 
@@ -85,12 +85,12 @@
 ### ITV plc (イギリス)
 * **一次資料**: ITV plc Annual Report and Accounts 2024 / 2025
 * **公表数値 (2025年)**: リニア広告 £1,514m, デジタル広告（ITVX） £474m (デジタル比率 31.3%)。
-* **公表URL**: [ITV plc Investor Relations](https://www.itvplc.com/investors/results-and-reports)
+* **公表URL**: [ITV plc Investor Relations](https://www.itvplc.com/investors)
 
 ### ProSiebenSat.1 Media SE (ドイツ)
 * **一次資料**: Annual Report 2024 / 2025, Joyn Operating Metrics
 * **公表数値 (2025年)**: リニア広告 €1,818m, デジタル広告（Joyn/AVOD） €354m (デジタル比率 16.3%)。
-* **公表URL**: [ProSiebenSat.1 Investor Relations](https://corporate.prosiebensat1.com/en/investor-relations/publications)
+* **公表URL**: [ProSiebenSat.1 Investor Relations](https://www.prosiebensat1.com/en)
 
 ### Métropole Télévision M6 (フランス)
 * **一次資料**: Document d'Enregistrement Universel 2024 / 2025
@@ -104,7 +104,7 @@
 ### 米国 (United States)
 * **公表機関**: Nielsen
 * **測定システム**: 『The Gauge』(2025年12月期 / 2026年速報)
-* **公表URL**: [Nielsen The Gauge](https://www.nielsen.com/insights/the-gauge/)
+* **公表URL**: [Nielsen The Gauge](https://www.nielsen.com/data-center/the-gauge/)
 
 ### 英国 (United Kingdom)
 * **公表機関**: Broadcasters' Audience Research Board (BARB)
@@ -114,4 +114,4 @@
 ### 日本 (Japan)
 * **公表機関**: REVISIO株式会社 / 株式会社ビデオリサーチ (STREAMO)
 * **調査名**: 『コネクテッドTV利用動向調査』『家庭内テレビ受像機アプリ利用シェア』
-* **公表URL**: [REVISIO 調査レポート](https://revisio.co.jp/service/c-tv)
+* **公表URL**: [REVISIO 調査レポート](https://revisio.co.jp/)
