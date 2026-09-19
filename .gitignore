@@ -1,0 +1,21 @@
+﻿# Standard exclusions
+.DS_Store
+Thumbs.db
+desktop.ini
+*.tmp
+*.log
+*.bak
+.vscode/
+.idea/
+node_modules/
+__pycache__/
+*.pyc
+.venv/
+env/
+.env
+
+# Version archives and intermediate evidence HTMLs
+versions/
+tf1-netflix-evidence*.html
+broadcaster-audience-shift-evidence*.html
+CODEX_DATA_EXTRACTION_SPEC.md
