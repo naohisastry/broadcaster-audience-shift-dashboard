@@ -692,7 +692,7 @@ function renderNationalViewingComparisonChart(data, mode = 'trend') {
                 scales: {
                     y: {
                         title: { display: true, text: '1\u65e5\u5e73\u5747\u8996\u8074\u6642\u9593\uff08\u5206\uff09' },
-                        min: 120,
+                        min: 0,
                         max: 260
                     },
                     x: { title: { display: true, text: '\u8abf\u67fb\u5e74\u6b21' } }
