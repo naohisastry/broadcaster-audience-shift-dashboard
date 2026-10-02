@@ -1,4 +1,4 @@
-// シリーズA ダッシュボード v1.10.0 — 描画ロジック
+// 放送事業者の視聴者接点再編 ダッシュボード v1.10.0 — 描画ロジック
 // 数値はすべて window.SERIES_A_DATA（data_v1100.js）から読む。ここに数値を直書きしない。
 (function () {
   const D = window.SERIES_A_DATA;
