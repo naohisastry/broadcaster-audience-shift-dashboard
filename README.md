@@ -93,3 +93,13 @@ broadcasters, linear-tv, streaming, bvod, svod, youtube, connected-tv, nielsen-t
 * `DATA_SOURCES.md`: 公的統計・IR資料の完全出典リンク集
 * `CHANGELOG.md`: バージョン更新履歴
 * `LICENSE`: MIT License
+* `LICENSE-CONTENT.md`: CC BY 4.0（文章・図表・整理済みデータ）
+
+## 📄 License / ライセンス
+
+- **Code**（HTML / CSS / JavaScript）: [MIT License](LICENSE)
+- **Content**（文章・図表・分析結果・整理済みデータ）: [CC BY 4.0](LICENSE-CONTENT.md)
+- 出典表示例 / Attribution: Naohisa Hashimoto, "broadcaster-audience-shift-dashboard", https://naohisastry.github.io/broadcaster-audience-shift-dashboard/
+- 第三者の元データの権利は各発行元に帰属します。 / Third-party source data remain the property of their original publishers.
+
+© 2026 Naohisa Hashimoto
