@@ -1,4 +1,4 @@
-// 放送事業者の視聴者接点再編 ダッシュボード v1.10.0 — 描画ロジック
+// 放送事業者の視聴者接点再編 ダッシュボード v1.11.0 — 描画ロジック
 // 数値はすべて window.SERIES_A_DATA（data_v1100.js）から読む。ここに数値を直書きしない。
 (function () {
   const D = window.SERIES_A_DATA;
@@ -401,8 +401,8 @@
 
   function fig2_2() {
     const f = D.fig2_2; const c = C();
-    const ukShare = f.uk.bvod.map((b, i) => +(b / f.uk.online[i] * 100).toFixed(2));
-    const est = f.years.map(y => y >= f.uk.estimatedFrom);
+    const ukShare = f.uk.bvod.map((b, i) => b == null ? null : +(b / f.uk.online[i] * 100).toFixed(2));
+    const est = f.years.map(y => f.uk.estimatedFrom ? y >= f.uk.estimatedFrom : false);
     const frMap = Object.fromEntries(f.franceTVR.years.map((y, i) => [y, +(f.franceTVR.tvr[i] / f.franceTVR.digital[i] * 100).toFixed(2)]));
     render('c2_2', {
       data: { labels: f.years, datasets: [
@@ -419,15 +419,19 @@
       })
     });
     table(document.querySelector('[data-fig="fig2_2"] .fig-table'), ['年', '日本', '英国', '英国 配信広告／ネット広告（£m）', 'フランス'],
-      f.years.map((y, i) => [y, f.japan.values[i] == null ? '—' : fmt(f.japan.values[i], 2) + '%', fmt(ukShare[i], 2) + '%' + (est[i] ? '（概算）' : ''), `${fmt(f.uk.bvod[i], 0)}／${fmt(f.uk.online[i], 0)}`,
+      f.years.map((y, i) => [y, f.japan.values[i] == null ? '—' : fmt(f.japan.values[i], 2) + '%', ukShare[i] == null ? '—' : (fmt(ukShare[i], 2) + '%' + (est[i] ? '（概算）' : '')), f.uk.bvod[i] == null ? '—' : `${fmt(f.uk.bvod[i], 0)}／${fmt(f.uk.online[i], 0)}`,
         frMap[y] != null ? fmt(frMap[y], 2) + '%（見逃し配信）' : (y === 2025 ? fmt(f.france2025.value, 2) + '%（定義が広い）' : '—')]));
   }
 
   function fig2_3() {
     const f = D.fig2_3; const u = D.fig2_2.uk; const c = C();
-    const online = u.bvod.map((b, i) => +(b / u.online[i] * 100).toFixed(2));
-    const tv = u.bvod.map((b, i) => +(b / (b + f.linear[i]) * 100).toFixed(1));
-    const est = f.years.map(y => y >= f.linearEstimatedFrom);
+    const bvod = f.bvod || u.bvod;
+    const online = f.years.map((y, i) => {
+      const uIdx = D.fig2_2.years.indexOf(y);
+      return +(bvod[i] / u.online[uIdx] * 100).toFixed(2);
+    });
+    const tv = bvod.map((b, i) => +(b / (b + f.linear[i]) * 100).toFixed(1));
+    const est = f.years.map(y => f.linearEstimatedFrom ? y >= f.linearEstimatedFrom : false);
     const dash = { segment: { borderDash: (ctx) => (est[ctx.p1DataIndex] ? [5, 4] : undefined) } };
     render('c2_3', {
       data: { labels: f.years, datasets: [
@@ -439,11 +443,11 @@
           barLabels: {},
           tooltip: Object.assign(baseOptions().plugins.tooltip, { callbacks: { label: (x) => `${x.dataset.label}：${fmt(x.raw, x.datasetIndex ? 2 : 1)}%` + (est[x.dataIndex] ? '（概算）' : '') } })
         }),
-        scales: Object.assign(baseOptions().scales, { y: Object.assign(baseOptions().scales.y, { min: 0, max: 30, title: { display: true, text: '割合（%）' }, ticks: { callback: v => v + '%' } }) })
+        scales: Object.assign(baseOptions().scales, { y: Object.assign(baseOptions().scales.y, { min: 0, max: 35, title: { display: true, text: '割合（%）' }, ticks: { callback: v => v + '%' } }) })
       })
     });
     table(document.querySelector('[data-fig="fig2_3"] .fig-table'), ['年', '配信広告（£m）', 'リニア（£m）', 'テレビ広告に占める配信', 'ネット広告に占める配信'],
-      f.years.map((y, i) => [y + (est[i] ? '（概算）' : ''), fmt(u.bvod[i], 0), fmt(f.linear[i], 0), fmt(tv[i], 1) + '%', fmt(online[i], 2) + '%']));
+      f.years.map((y, i) => [y + (est[i] ? '（概算）' : ''), fmt(bvod[i], 0), fmt(f.linear[i], 0), fmt(tv[i], 1) + '%', fmt(online[i], 2) + '%']));
   }
 
   function fig2_4(view = 'uk') {

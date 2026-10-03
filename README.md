@@ -1,5 +1,5 @@
 # Broadcaster Audience Shift Dashboard (放送事業者の視聴者接点再編)
-### 10-Year Quantitative Evidence Across US, UK, France, Germany & Japan (2014–2025) Ver 1.10.0
+### 10-Year Quantitative Evidence Across US, UK, France, Germany & Japan (2014–2025) Ver 1.11.0
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 [![HTML5](https://img.shields.io/badge/HTML5-Single%20Page%20App-orange.svg)](#)
@@ -81,7 +81,7 @@ broadcasters, linear-tv, streaming, bvod, svod, youtube, connected-tv, nielsen-t
 
 ## 🛠️ File Structure
 
-* `index.html`: ダッシュボード本体（完全自己完結型SPA / Ver 1.10.0）
+* `index.html`: ダッシュボード本体（完全自己完結型SPA / Ver 1.11.0）
 * `data_v1100.js`: 一次データセット（検証・校了版）
 * `app_v1100.js`: Chart.js描画ロジック・インタラクション制御
 * `chart.min.js`: ローカル配備用 Chart.js ライブラリ (v4.5.1)
