@@ -3,13 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>平日の映像接触時間（TV＋ネット）：世代別の時系列推移 | Broadcaster Audience Shift</title>
-<meta name="description" content="総務省『情報通信メディアの利用時間と情報行動に関する調査』の生データ（2014〜2025年）に基づき、平日1日あたりのテレビ（生放送）とネット動画の接触時間を可視化。世代ごとの推移や接触時間の上限値（3時間の壁）から生活者インサイトを読み解く。">
+<title>平日の映像接触時間（TV＋ネット）：世代別の時系列推移＆24時間リズム | Broadcaster Audience Shift</title>
+<meta name="description" content="総務省『情報通信メディア利用時間調査』の確定生データ（2014〜2025年）に基づき、平日1日のテレビとネット動画の接触時間、および24時間の生活リズム推移を可視化。3時間の壁やテレビ40分底打ちの生活者インサイトを検証。">
 <meta name="author" content="Naohisa Hashimoto">
 
 <!-- OGP Settings -->
 <meta property="og:site_name" content="グラフで見える〇〇の世界 (Naohisa Hashimoto Media Architecture Research)">
-<meta property="og:title" content="平日の映像接触時間（TV＋ネット）：世代別の時系列推移">
+<meta property="og:title" content="平日の映像接触時間（TV＋ネット）：世代別の時系列推移＆24時間リズム">
 <meta property="og:description" content="総務省『情報通信メディア利用時間調査』（2014〜2025年）に基づく世代別時系列推移。接触時間の上限（3時間の壁）やテレビ40分底打ちなど、生活者インサイトを可視化。">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://naohisastry.github.io/broadcaster-audience-shift-dashboard/evidence-stacked.html">
@@ -17,15 +17,23 @@
 
 <!-- Twitter Card Settings -->
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="平日の映像接触時間（TV＋ネット）：世代別の時系列推移">
+<meta name="twitter:title" content="平日の映像接触時間（TV＋ネット）：世代別の時系列推移＆24時間リズム">
 <meta name="twitter:description" content="総務省『情報通信メディア利用時間調査』（2014〜2025年）に基づく世代別時系列推移。接触時間の上限（3時間の壁）やテレビ40分底打ちなど、生活者インサイトを可視化。">
 <meta name="twitter:image" content="https://naohisastry.github.io/broadcaster-audience-shift-dashboard/evidence-stacked-preview.png">
 
 <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+<script src="chart.min.js"></script>
 <style>
   .bar-seg { transition: all 0.2s ease; }
   .bar-seg:hover { filter: brightness(1.25); }
   .group:hover .tooltip-box { opacity: 1; pointer-events: auto; }
+  .tab-btn { transition: all 0.2s ease; }
+  .tab-btn.active {
+    background: rgba(59, 130, 246, 0.2);
+    border-color: rgba(59, 130, 246, 0.6);
+    color: #93c5fd;
+    box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+  }
 </style>
 </head>
 <body class="bg-[#060913] text-[#f1f5f9] antialiased min-h-screen flex flex-col font-sans">
@@ -37,19 +45,31 @@
         <div class="flex flex-col gap-0.5">
           <div class="flex items-center gap-2 mb-0.5">
             <span class="px-2 py-0.5 text-[10px] font-mono font-bold rounded bg-blue-500/20 text-blue-400 border border-blue-500/30">生活者インサイト分析</span>
-            <span class="text-[11px] text-slate-400 font-mono">公的統計一次エビデンス</span>
+            <span class="text-[11px] text-slate-400 font-mono">公的統計一次エビデンス（総務省×NHK）</span>
           </div>
           <h1 class="text-base sm:text-xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-blue-300 via-indigo-200 to-emerald-300">
-            平日の映像接触時間（TV＋ネット）：世代別の時系列推移
+            平日の映像接触時間（TV＋ネット）：世代別推移 ＆ 24時間生活リズム
           </h1>
           <p class="text-[11px] sm:text-xs text-slate-400 leading-relaxed max-w-4xl mt-0.5">
-            総務省『情報通信メディアの利用時間と情報行動に関する調査』の生データ（2014〜2025年）に基づき、平日1日あたりの「テレビ（リアルタイム視聴）」と「ネット動画利用（動画共有＋オンデマンド配信）」の接触時間をグラフ化。世代ごとの推移や接触時間の上限値（約3時間の壁）、テレビ視聴の底打ち水準を可視化することで、生活者インサイトを発見する。
+            総務省『情報通信メディアの利用時間と情報行動に関する調査』およびNHK『国民生活時間調査』に基づき、平日1日のテレビとネット動画の接触総量、および24時間の生活リズム推移を可視化。「3時間の壁」やテレビの「40分底打ち」の実態を解剖する。
           </p>
         </div>
         <div class="text-right whitespace-nowrap pt-1 flex flex-col items-end gap-1">
-          <span class="text-xs font-mono text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">Ver 1.12.0</span>
+          <span class="text-xs font-mono text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">Ver 1.13.0</span>
           <span class="text-[10px] font-mono text-slate-500">2026.10</span>
         </div>
+      </div>
+
+      <!-- Navigation Tabs -->
+      <div class="flex items-center gap-2 pt-1 border-t border-white/5">
+        <button id="tab-btn-1" onclick="switchTab('tab1')" class="tab-btn active px-3.5 py-1.5 rounded-lg border border-white/10 text-xs font-bold flex items-center gap-2">
+          <span>📊</span>
+          <span>Tab 1: 12年間の総量・構成推移（横棒積み上げ）</span>
+        </button>
+        <button id="tab-btn-2" onclick="switchTab('tab2')" class="tab-btn px-3.5 py-1.5 rounded-lg border border-white/10 text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2">
+          <span>⏰</span>
+          <span>Tab 2: 24時間生活リズム変化（朝・昼・夜の推移カーブ）</span>
+        </button>
       </div>
     </div>
   </header>
@@ -57,163 +77,254 @@
   <!-- ================= Main Content ================= -->
   <main class="flex-1 max-w-7xl w-full mx-auto p-3 sm:p-6 space-y-6">
 
-    <!-- Main Evidence Card -->
-    <div class="bg-[#0d1426]/75 border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl backdrop-blur-md space-y-6">
+    <!-- ================= Tab 1 Pane: 12年間の総量・構成推移 ================= -->
+    <div id="tab-pane-1" class="space-y-6">
+      <div class="bg-[#0d1426]/75 border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl backdrop-blur-md space-y-6">
 
-      <!-- Header & Scale Ruler -->
-      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-4">
-        <div>
-          <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-            <span>世代別接触総量と内訳の変化</span>
-            <span class="text-xs font-normal text-slate-400">（全世代共通：0〜240分スケール）</span>
-          </h2>
-          <p class="text-xs text-slate-400 mt-0.5">バー全体の右端＝総接触時間（天井約3時間）、境界線＝メディア間の勢力図</p>
-        </div>
-
-        <!-- Legend -->
-        <div class="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-xl border border-white/10 text-xs shadow-sm self-start md:self-auto">
-          <div class="flex items-center gap-2">
-            <span class="w-3.5 h-3.5 rounded bg-sky-500 shadow"></span>
-            <span class="font-medium text-slate-200">テレビ（生放送）</span>
+        <!-- Header & Scale Ruler -->
+        <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <span>世代別接触総量と内訳の変化</span>
+              <span class="text-xs font-normal text-slate-400">（全世代共通：0〜240分スケール）</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">バー全体の右端＝総接触時間（天井約3時間）、境界線＝メディア間の勢力図</p>
           </div>
-          <div class="flex items-center gap-2">
-            <span class="w-3.5 h-3.5 rounded bg-amber-500 shadow"></span>
-            <span class="font-medium text-slate-200">ネット動画</span>
+
+          <!-- Legend -->
+          <div class="flex items-center gap-4 bg-slate-900/80 px-4 py-2 rounded-xl border border-white/10 text-xs shadow-sm self-start md:self-auto">
+            <div class="flex items-center gap-2">
+              <span class="w-3.5 h-3.5 rounded bg-sky-500 shadow"></span>
+              <span class="font-medium text-slate-200">テレビ（生放送）</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-3.5 h-3.5 rounded bg-amber-500 shadow"></span>
+              <span class="font-medium text-slate-200">ネット動画</span>
+            </div>
+            <span class="text-slate-500 border-l border-white/10 pl-2 text-[11px] font-mono">平日・分/日</span>
           </div>
-          <span class="text-slate-500 border-l border-white/10 pl-2 text-[11px] font-mono">平日・分/日</span>
         </div>
-      </div>
 
-      <!-- Shared 1-hour Scale Ruler -->
-      <div class="bg-black/40 rounded-xl p-3 border border-white/5">
-        <div class="flex items-center text-xs font-mono">
-          <div class="w-14 text-right pr-2 text-[10px] text-slate-400">年次</div>
-          <div class="flex-1 relative h-6">
-            <!-- 0h -->
-            <div class="absolute left-0 bottom-0 text-slate-500 flex flex-col items-start">
-              <span class="text-[10px] leading-tight font-bold">0h</span>
-              <span class="text-[9px] text-slate-600 leading-tight">0分</span>
+        <!-- Shared 1-hour Scale Ruler -->
+        <div class="bg-black/40 rounded-xl p-3 border border-white/5">
+          <div class="flex items-center text-xs font-mono">
+            <div class="w-14 text-right pr-2 text-[10px] text-slate-400">年次</div>
+            <div class="flex-1 relative h-6">
+              <!-- 0h -->
+              <div class="absolute left-0 bottom-0 text-slate-500 flex flex-col items-start">
+                <span class="text-[10px] leading-tight font-bold">0h</span>
+                <span class="text-[9px] text-slate-600 leading-tight">0分</span>
+              </div>
+              <!-- 1h -->
+              <div class="absolute bottom-0 flex flex-col items-center -translate-x-1/2" style="left: 25%;">
+                <span class="text-[10px] font-bold text-sky-400 leading-tight">1h</span>
+                <span class="text-[9px] text-sky-400/80 leading-tight">60分</span>
+              </div>
+              <!-- 2h -->
+              <div class="absolute bottom-0 flex flex-col items-center -translate-x-1/2" style="left: 50%;">
+                <span class="text-[10px] font-bold text-amber-400 leading-tight">2h</span>
+                <span class="text-[9px] text-amber-400/80 leading-tight">120分</span>
+              </div>
+              <!-- 3h (Wall) -->
+              <div class="absolute bottom-0 flex flex-col items-center -translate-x-1/2" style="left: 75%;">
+                <span class="text-[10px] font-bold text-red-400 leading-tight">3h (壁)</span>
+                <span class="text-[9px] text-red-400/80 leading-tight">180分</span>
+              </div>
+              <!-- 4h -->
+              <div class="absolute right-0 bottom-0 text-slate-500 flex flex-col items-end">
+                <span class="text-[10px] leading-tight font-bold">4h</span>
+                <span class="text-[9px] text-slate-600 leading-tight">240分</span>
+              </div>
             </div>
-            <!-- 1h -->
-            <div class="absolute bottom-0 flex flex-col items-center -translate-x-1/2" style="left: 25%;">
-              <span class="text-[10px] font-bold text-sky-400 leading-tight">1h</span>
-              <span class="text-[9px] text-sky-400/80 leading-tight">60分</span>
+            <div class="w-24 text-right pr-1 text-[10px] text-slate-400">合計 (分)</div>
+          </div>
+        </div>
+
+        <!-- Age Groups (10代〜50代 Horizontal Stacked Bars) -->
+        <div class="space-y-4" id="bars-container">
+          <!-- Injected by JavaScript -->
+        </div>
+
+        <!-- Raw Evidence Data Table -->
+        <div class="rounded-xl border border-white/10 bg-black/30 overflow-hidden">
+          <div class="p-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
+            <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+              <span>📋</span> 一次データ数値表（2014年 vs 2020年 vs 2025年 抜粋）
+            </span>
+            <span class="text-[11px] text-slate-400 font-mono">単位：分/日（平日・平均）</span>
+          </div>
+          <div class="overflow-x-auto">
+            <table class="w-full text-xs text-left border-collapse font-mono">
+              <thead>
+                <tr class="border-b border-white/10 text-slate-400 bg-white/5">
+                  <th class="py-2 px-3 font-sans font-bold">年代</th>
+                  <th class="py-2 px-3">2014年 (TV / Net / 計)</th>
+                  <th class="py-2 px-3">2020年 (TV / Net / 計)</th>
+                  <th class="py-2 px-3">2025年 (TV / Net / 計)</th>
+                  <th class="py-2 px-3 font-sans">逆転年次</th>
+                  <th class="py-2 px-3 font-sans">12年総量増減</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-white/5 text-slate-300">
+                <tr>
+                  <td class="py-2 px-3 font-bold font-sans text-red-400">10代</td>
+                  <td class="py-2 px-3 text-slate-400">91.8 / 18.7 / 110.5</td>
+                  <td class="py-2 px-3 text-slate-300">73.1 / 107.3 / 180.4</td>
+                  <td class="py-2 px-3 font-semibold text-white">43.4 / 147.6 / <span class="text-amber-400 font-bold">191.0</span></td>
+                  <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">2019年 (3.4倍)</span></td>
+                  <td class="py-2 px-3 text-red-400 font-bold">+80.5分 (+73%)</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-bold font-sans text-red-400">20代</td>
+                  <td class="py-2 px-3 text-slate-400">118.9 / 21.3 / 140.2</td>
+                  <td class="py-2 px-3 text-slate-300">88.0 / 91.9 / 179.9</td>
+                  <td class="py-2 px-3 font-semibold text-white">46.3 / 145.3 / <span class="text-amber-400 font-bold">191.6</span></td>
+                  <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">2020年 (3.1倍)</span></td>
+                  <td class="py-2 px-3 text-red-400 font-bold">+51.4分 (+37%)</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-bold font-sans text-amber-400">30代</td>
+                  <td class="py-2 px-3 text-slate-400">151.6 / 7.4 / 159.0</td>
+                  <td class="py-2 px-3 text-slate-300">135.4 / 48.5 / 183.9</td>
+                  <td class="py-2 px-3 font-semibold text-white">78.0 / 102.1 / <span class="text-white">180.1</span></td>
+                  <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">2024年 (1.3倍)</span></td>
+                  <td class="py-2 px-3 text-emerald-400 font-semibold">+21.1分 (+13%)</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-bold font-sans text-emerald-400">40代</td>
+                  <td class="py-2 px-3 text-slate-400">169.5 / 3.1 / 172.6</td>
+                  <td class="py-2 px-3 text-slate-300">151.0 / 40.0 / 191.0</td>
+                  <td class="py-2 px-3 font-semibold text-white">112.3 / 84.0 / <span class="text-white">196.3</span></td>
+                  <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">逆転目前 (差28分)</span></td>
+                  <td class="py-2 px-3 text-slate-400">+23.7分 (+14%)</td>
+                </tr>
+                <tr>
+                  <td class="py-2 px-3 font-bold font-sans text-blue-400">50代</td>
+                  <td class="py-2 px-3 text-slate-400">180.2 / 4.6 / 184.8</td>
+                  <td class="py-2 px-3 text-slate-300">195.6 / 28.0 / 223.6</td>
+                  <td class="py-2 px-3 font-semibold text-white">152.7 / 47.6 / <span class="text-white">200.3</span></td>
+                  <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">TV依然76%</span></td>
+                  <td class="py-2 px-3 text-slate-400">+15.5分 (+8%)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= Tab 2 Pane: 24時間生活リズム変化 ================= -->
+    <div id="tab-pane-2" class="space-y-6 hidden">
+      <div class="bg-[#0d1426]/75 border border-white/10 rounded-2xl p-4 sm:p-6 shadow-2xl backdrop-blur-md space-y-6">
+
+        <!-- Header & Controls -->
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-white/10 pb-4">
+          <div>
+            <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
+              <span>24時間 生活リズムのメディア接触カーブ（時間帯別行為者率）</span>
+              <span class="text-xs font-normal text-slate-400">（平日・1時間刻み）</span>
+            </h2>
+            <p class="text-xs text-slate-400 mt-0.5">
+              夜のゴールデン帯崩壊と、朝（6〜8時）の生活インフラ残存（テレビ底打ちゾーン）を可視化
+            </p>
+          </div>
+
+          <!-- Controls: Generation Filter -->
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="text-xs text-slate-400 font-mono mr-1">年代選択:</span>
+            <button onclick="setDaypartAge('10代')" class="daypart-age-btn px-2.5 py-1 text-xs rounded border border-white/10 bg-blue-500/20 text-blue-300 border-blue-500/50 font-bold" data-age="10代">10代</button>
+            <button onclick="setDaypartAge('20代')" class="daypart-age-btn px-2.5 py-1 text-xs rounded border border-white/10 bg-white/5 text-slate-400 hover:text-white" data-age="20代">20代</button>
+            <button onclick="setDaypartAge('30代')" class="daypart-age-btn px-2.5 py-1 text-xs rounded border border-white/10 bg-white/5 text-slate-400 hover:text-white" data-age="30代">30代</button>
+            <button onclick="setDaypartAge('40代')" class="daypart-age-btn px-2.5 py-1 text-xs rounded border border-white/10 bg-white/5 text-slate-400 hover:text-white" data-age="40代">40代</button>
+            <button onclick="setDaypartAge('50代')" class="daypart-age-btn px-2.5 py-1 text-xs rounded border border-white/10 bg-white/5 text-slate-400 hover:text-white" data-age="50代">50代</button>
+          </div>
+        </div>
+
+        <!-- Metric Badges & Focus Callouts -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div class="bg-black/30 border border-sky-500/20 rounded-xl p-3">
+            <div class="text-[10px] text-sky-400 font-mono font-bold flex items-center justify-between">
+              <span>🌅 朝帯の残存（6:00〜8:00）</span>
+              <span class="px-1.5 py-0.5 rounded bg-sky-500/20 text-sky-300">底打ちゾーン</span>
             </div>
-            <!-- 2h -->
-            <div class="absolute bottom-0 flex flex-col items-center -translate-x-1/2" style="left: 50%;">
-              <span class="text-[10px] font-bold text-amber-400 leading-tight">2h</span>
-              <span class="text-[9px] text-amber-400/80 leading-tight">120分</span>
+            <div class="text-sm font-bold text-white mt-1" id="stat-morning">行為者率 15.8% (2014年 24.5%)</div>
+            <p class="text-[11px] text-slate-400 mt-0.5">身支度・時計代わりの生放送として粘り強く残存</p>
+          </div>
+
+          <div class="bg-black/30 border border-red-500/20 rounded-xl p-3">
+            <div class="text-[10px] text-red-400 font-mono font-bold flex items-center justify-between">
+              <span>🌃 夜帯の急落（19:00〜22:00）</span>
+              <span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-300">-29.9pt</span>
             </div>
-            <!-- 3h (Wall) -->
-            <div class="absolute bottom-0 flex flex-col items-center -translate-x-1/2" style="left: 75%;">
-              <span class="text-[10px] font-bold text-red-400 leading-tight">3h (壁)</span>
-              <span class="text-[9px] text-red-400/80 leading-tight">180分</span>
+            <div class="text-sm font-bold text-white mt-1" id="stat-night">行為者率 22.5% (2014年 52.4%)</div>
+            <p class="text-[11px] text-slate-400 mt-0.5">夜の山が崩壊し、ネット利用（61.8%）へ完全置換</p>
+          </div>
+
+          <div class="bg-black/30 border border-amber-500/20 rounded-xl p-3">
+            <div class="text-[10px] text-amber-400 font-mono font-bold flex items-center justify-between">
+              <span>⚡ 逆転交差ポイント</span>
+              <span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-300">時間帯シフト</span>
             </div>
-            <!-- 4h -->
-            <div class="absolute right-0 bottom-0 text-slate-500 flex flex-col items-end">
-              <span class="text-[10px] leading-tight font-bold">4h</span>
-              <span class="text-[9px] text-slate-600 leading-tight">240分</span>
+            <div class="text-sm font-bold text-white mt-1" id="stat-crossover">17時以降 ネット圧倒</div>
+            <p class="text-[11px] text-slate-400 mt-0.5">帰宅後の余暇時間はネット動画・SNSが独占</p>
+          </div>
+        </div>
+
+        <!-- 24-Hour Line Chart Container -->
+        <div class="bg-black/40 rounded-xl p-4 border border-white/5 space-y-2">
+          <div class="flex items-center justify-between text-xs text-slate-400 font-mono pb-2 border-b border-white/5">
+            <span id="chart-subhead" class="text-slate-200 font-bold">10代：2014年 vs 2024年 24時間行為者率推移</span>
+            <div class="flex items-center gap-3">
+              <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-sky-400 inline-block rounded"></span><span class="text-[11px]">2024 TV</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-sky-700 border-dashed inline-block rounded"></span><span class="text-[11px] text-slate-500">2014 TV</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-amber-500 inline-block rounded"></span><span class="text-[11px]">2024 ネット</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-amber-800 border-dashed inline-block rounded"></span><span class="text-[11px] text-slate-500">2014 ネット</span></div>
             </div>
           </div>
-          <div class="w-24 text-right pr-1 text-[10px] text-slate-400">合計 (分)</div>
+          <div class="relative h-80 sm:h-96 w-full">
+            <canvas id="daypartCanvas"></canvas>
+          </div>
         </div>
-      </div>
 
-      <!-- Age Groups (10代〜50代 Horizontal Stacked Bars) -->
-      <div class="space-y-4" id="bars-container">
-        <!-- Injected by JavaScript -->
-      </div>
-
-      <!-- Raw Evidence Data Table -->
-      <div class="rounded-xl border border-white/10 bg-black/30 overflow-hidden">
-        <div class="p-3 bg-white/5 border-b border-white/10 flex items-center justify-between">
-          <span class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
-            <span>📋</span> 一次データ数値表（2014年 vs 2020年 vs 2025年 抜粋）
-          </span>
-          <span class="text-[11px] text-slate-400 font-mono">単位：分/日（平日・平均）</span>
+        <!-- Daypart Findings Note -->
+        <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 space-y-2 text-xs text-slate-300">
+          <div class="font-bold text-white flex items-center gap-2">
+            <span class="text-cyan-400">💡</span> 24時間データから読み解く「40分底打ち」のメカニズム
+          </div>
+          <p class="leading-relaxed text-slate-400">
+            2014年当時、若者（10代・20代）にとってもテレビは「夜のゴールデン帯（19〜22時）に半分以上が見る娯楽の王様」でした。しかし10年を経て、夜のテレビ行為者率は2割前半へと半減し、ネット（6割超）に完全に圧倒されました。
+          </p>
+          <p class="leading-relaxed text-slate-400">
+            一方で、<strong class="text-sky-300">朝（6〜8時台）のテレビ視聴は夜ほど急激に落ち込まず、15%前後の行為者率を維持</strong>しています。その結果、現在若者がテレビを見る時間（約40分）の約半分は、夜ではなく「朝の身支度・時計代わりの生活インフラ」として機能していることが24時間データから裏付けられます。
+          </p>
         </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-xs text-left border-collapse font-mono">
-            <thead>
-              <tr class="border-b border-white/10 text-slate-400 bg-white/5">
-                <th class="py-2 px-3 font-sans font-bold">年代</th>
-                <th class="py-2 px-3">2014年 (TV / Net / 計)</th>
-                <th class="py-2 px-3">2020年 (TV / Net / 計)</th>
-                <th class="py-2 px-3">2025年 (TV / Net / 計)</th>
-                <th class="py-2 px-3 font-sans">逆転年次</th>
-                <th class="py-2 px-3 font-sans">10年総量増減</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-white/5 text-slate-300">
-              <tr>
-                <td class="py-2 px-3 font-bold font-sans text-red-400">10代</td>
-                <td class="py-2 px-3 text-slate-400">91.8 / 18.7 / 110.5</td>
-                <td class="py-2 px-3 text-slate-300">73.1 / 107.3 / 180.4</td>
-                <td class="py-2 px-3 font-semibold text-white">43.4 / 147.6 / <span class="text-amber-400 font-bold">191.0</span></td>
-                <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">2019年 (3.4倍)</span></td>
-                <td class="py-2 px-3 text-red-400 font-bold">+80.5分 (+73%)</td>
-              </tr>
-              <tr>
-                <td class="py-2 px-3 font-bold font-sans text-red-400">20代</td>
-                <td class="py-2 px-3 text-slate-400">118.9 / 21.3 / 140.2</td>
-                <td class="py-2 px-3 text-slate-300">88.0 / 91.9 / 179.9</td>
-                <td class="py-2 px-3 font-semibold text-white">46.3 / 145.3 / <span class="text-amber-400 font-bold">191.6</span></td>
-                <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 font-bold">2020年 (3.1倍)</span></td>
-                <td class="py-2 px-3 text-red-400 font-bold">+51.4分 (+37%)</td>
-              </tr>
-              <tr>
-                <td class="py-2 px-3 font-bold font-sans text-amber-400">30代</td>
-                <td class="py-2 px-3 text-slate-400">151.6 / 7.4 / 159.0</td>
-                <td class="py-2 px-3 text-slate-300">135.4 / 48.5 / 183.9</td>
-                <td class="py-2 px-3 font-semibold text-white">78.0 / 102.1 / <span class="text-white">180.1</span></td>
-                <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-400 font-bold">2024年 (1.3倍)</span></td>
-                <td class="py-2 px-3 text-emerald-400 font-semibold">+21.1分 (+13%)</td>
-              </tr>
-              <tr>
-                <td class="py-2 px-3 font-bold font-sans text-emerald-400">40代</td>
-                <td class="py-2 px-3 text-slate-400">169.5 / 3.1 / 172.6</td>
-                <td class="py-2 px-3 text-slate-300">151.0 / 40.0 / 191.0</td>
-                <td class="py-2 px-3 font-semibold text-white">112.3 / 84.0 / <span class="text-white">196.3</span></td>
-                <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">逆転目前 (差28分)</span></td>
-                <td class="py-2 px-3 text-slate-400">+23.7分 (+14%)</td>
-              </tr>
-              <tr>
-                <td class="py-2 px-3 font-bold font-sans text-blue-400">50代</td>
-                <td class="py-2 px-3 text-slate-400">180.2 / 4.6 / 184.8</td>
-                <td class="py-2 px-3 text-slate-300">195.6 / 28.0 / 223.6</td>
-                <td class="py-2 px-3 font-semibold text-white">152.7 / 47.6 / <span class="text-white">200.3</span></td>
-                <td class="py-2 px-3 font-sans"><span class="px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 font-bold">TV依然76%</span></td>
-                <td class="py-2 px-3 text-slate-400">+15.5分 (+8%)</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
 
-      <!-- Formal Evidence & Methodological Notes -->
-      <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 space-y-3 text-xs text-slate-300">
-        <div class="font-bold text-white flex items-center gap-2 text-sm">
-          <span class="text-blue-400">📌</span> 【エビデンスの焦点と公的定義】
-        </div>
-        <ul class="list-disc list-inside space-y-1.5 leading-relaxed text-slate-400 pl-1">
-          <li><strong class="text-slate-200">一次公表元:</strong> 総務省 情報通信政策研究所（IICP）『情報通信メディアの利用時間と情報行動に関する調査』（2014年〜2025年公表各年版）。</li>
-          <li><strong class="text-slate-200">調査手法と母集団:</strong> 全国の13歳〜69歳の男女（平日・日記式調査）。※時系列の厳密な比較整合性を保つため、2024年調査から追加された70代の数値は除外した10代〜50代の確定数値を採用。</li>
-          <li><strong class="text-slate-200">指標の厳密な定義:</strong>
-            <ul class="list-none pl-4 space-y-1 mt-1 text-[11px]">
-              <li>・<strong class="text-sky-400">テレビ（リアルタイム視聴）:</strong> テレビ受像機およびPC・スマートフォン等のワンセグ／同時配信による地上波等のリアルタイム放送視聴時間。</li>
-              <li>・<strong class="text-amber-400">ネット動画利用:</strong> 「動画投稿・共有サービス（YouTube等）」＋「オンデマンド動画配信（Netflix、TVer、Amazon Prime Video等）」の合算値。</li>
-            </ul>
-          </li>
-          <li><strong class="text-slate-200">構造的示唆（3つの生活者インサイト）:</strong>
-            <ol class="list-decimal list-inside pl-2 space-y-1 mt-1 text-slate-300">
-              <li><strong class="text-white">可処分時間の「3時間の上限」:</strong> どの世代も1日の動画接触総量は約180〜200分（約3時間）で頭打ちとなり、総量が無制限に増えることはない。</li>
-              <li><strong class="text-white">若年層の底打ちと残存岩盤:</strong> 先行してネット動画に移行した10代・20代も、テレビ視聴は「40分前後（全体の約22〜24%）」で明確に下げ止まり、朝の生活情報や緊急報道・大型中継等の基盤を残している。</li>
-              <li><strong class="text-white">世代間ドミノ倒し:</strong> 10代（2019年）➔ 20代（2020年）➔ 30代（2024年）と逆転が上流世代へ波及しており、40代（差28分）も目前に迫る。</li>
-            </ol>
-          </li>
-        </ul>
       </div>
+    </div>
 
+    <!-- Formal Evidence & Methodological Notes -->
+    <div class="p-4 rounded-xl bg-slate-900/90 border border-white/10 space-y-3 text-xs text-slate-300">
+      <div class="font-bold text-white flex items-center gap-2 text-sm">
+        <span class="text-blue-400">📌</span> 【エビデンスの焦点と公的定義】
+      </div>
+      <ul class="list-disc list-inside space-y-1.5 leading-relaxed text-slate-400 pl-1">
+        <li><strong class="text-slate-200">一次公表元:</strong> 総務省 情報通信政策研究所（IICP）『情報通信メディアの利用時間と情報行動に関する調査』（2014年〜2025年公表各年版）、およびNHK放送文化研究所『国民生活時間調査』。</li>
+        <li><strong class="text-slate-200">調査手法と母集団:</strong> 全国の13歳〜69歳の男女（平日・日記式調査）。※時系列の厳密な比較整合性を保つため、2024年調査から追加された70代の数値は除外した10代〜50代の確定数値を採用。</li>
+        <li><strong class="text-slate-200">指標の厳密な定義:</strong>
+          <ul class="list-none pl-4 space-y-1 mt-1 text-[11px]">
+            <li>・<strong class="text-sky-400">テレビ（リアルタイム視聴）:</strong> テレビ受像機およびPC・スマートフォン等のワンセグ／同時配信による地上波等のリアルタイム放送視聴時間および行為者率。</li>
+            <li>・<strong class="text-amber-400">ネット動画・ネット利用:</strong> 「動画投稿・共有サービス（YouTube等）」＋「オンデマンド動画配信（Netflix、TVer等）」を含むインターネット利用。</li>
+          </ul>
+        </li>
+        <li><strong class="text-slate-200">構造的示唆（生活者インサイト）:</strong>
+          <ol class="list-decimal list-inside pl-2 space-y-1 mt-1 text-slate-300">
+            <li><strong class="text-white">可処分時間の「3時間の上限」:</strong> どの世代も1日の動画接触総量は約180〜200分（約3時間）で頭打ちとなり、総量が無制限に増えることはない。</li>
+            <li><strong class="text-white">夜の崩壊と朝の底打ち（生活インフラ化）:</strong> 若年層のテレビ視聴は夜の娯楽から剥がれ落ちた一方、朝（6〜8時）の時計代わり・身支度インフラとして40分前後で下げ止まっている。</li>
+            <li><strong class="text-white">世代間ドミノ倒し:</strong> 10代（2019年）➔ 20代（2020年）➔ 30代（2024年）と逆転が上流世代へ波及しており、40代（差28分）も目前に迫る。</li>
+          </ol>
+        </li>
+      </ul>
     </div>
 
   </main>
@@ -234,6 +345,9 @@
   </footer>
 
 <script>
+// ==========================================
+// Tab 1: Horizontal Stacked Bar Data & Logic
+// ==========================================
 const allData = [
   {
     age: '10代',
@@ -288,7 +402,7 @@ const allData = [
 ];
 
 const years = [2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025];
-const maxScale = 240; // 240分 = 4時間
+const maxScale = 240;
 
 function renderHorizontal() {
   const container = document.getElementById('bars-container');
@@ -311,28 +425,17 @@ function renderHorizontal() {
 
       rowsHtml += `
         <div class="flex items-center group cursor-pointer relative py-0.5">
-          <!-- Year Label -->
           <div class="w-14 text-[10px] font-mono text-right pr-2 ${isKeyYear ? 'font-bold text-white' : 'text-slate-500 opacity-75'}">
             '${String(yr).slice(2)} (${yr})
           </div>
-
-          <!-- Horizontal Bar Track with 1-hour gridlines -->
           <div class="flex-1 h-3.5 bg-black/40 rounded overflow-hidden flex relative border border-white/5">
-            <!-- 1 Hour Gridline (60m = 25%) -->
             <div class="absolute top-0 bottom-0 border-r border-sky-400/30 pointer-events-none z-10" style="left: 25%;"></div>
-            <!-- 2 Hours Gridline (120m = 50%) -->
             <div class="absolute top-0 bottom-0 border-r border-amber-400/30 pointer-events-none z-10" style="left: 50%;"></div>
-            <!-- 3 Hours Gridline (180m = 75%) -->
             <div class="absolute top-0 bottom-0 border-r border-dashed border-red-500/60 pointer-events-none z-10" style="left: 75%;"></div>
 
-            <!-- TV Segment (Sky Blue) -->
             <div class="bar-seg bg-sky-500 h-full relative" style="width: ${tvPct}%;"></div>
-
-            <!-- Net Segment (Amber) -->
             <div class="bar-seg bg-amber-500 h-full relative" style="width: ${netPct}%;"></div>
           </div>
-
-          <!-- Total & Badges -->
           <div class="w-24 pl-2 flex items-center justify-between text-[10px] font-mono">
             <span class="${isKeyYear ? 'font-bold text-white' : 'text-slate-400'}">${Math.round(totM)}分</span>
             <div class="flex items-center gap-1">
@@ -340,8 +443,6 @@ function renderHorizontal() {
               ${isBottom ? '<span class="px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-400 text-[8px] font-bold border border-cyan-500/30">底値</span>' : ''}
             </div>
           </div>
-
-          <!-- Hover Tooltip -->
           <div class="tooltip-box opacity-0 pointer-events-none transition-opacity duration-150 absolute left-28 -top-8 z-30 bg-slate-900/95 text-white border border-slate-700 px-2 py-1 rounded shadow-2xl text-[10px] whitespace-nowrap">
             <span class="font-bold text-slate-100">${d.age} ${yr}年: </span>
             <span class="text-sky-400 font-semibold">テレビ ${tvM.toFixed(1)}分 (${((tvM/totM)*100).toFixed(0)}%)</span> + 
@@ -354,7 +455,6 @@ function renderHorizontal() {
 
     html += `
       <div class="bg-black/30 rounded-xl p-3.5 border border-white/5 hover:border-blue-500/30 transition-all">
-        <!-- Age Header -->
         <div class="flex items-center justify-between pb-2 mb-2 border-b border-white/5">
           <div class="flex items-center gap-2.5">
             <h3 class="text-sm font-extrabold text-white">${d.age}</h3>
@@ -364,8 +464,6 @@ function renderHorizontal() {
             ${d.stat2025}
           </div>
         </div>
-
-        <!-- 12-Year Horizontal Bars -->
         <div class="space-y-0.5">
           ${rowsHtml}
         </div>
@@ -376,6 +474,231 @@ function renderHorizontal() {
   container.innerHTML = html;
 }
 
+// ==========================================
+// Tab 2: 24-Hour Daypart Rhythm Data & Logic
+// ==========================================
+const hours24 = [
+  "0時", "1時", "2時", "3時", "4時", "5時", 
+  "6時", "7時", "8時", "9時", "10時", "11時", 
+  "12時", "13時", "14時", "15時", "16時", "17時", 
+  "18時", "19時", "20時", "21時", "22時", "23時"
+];
+
+// 総務省×NHK生活時間調査に基づく世代別・24時間行為者率データ（平日）
+const daypartData = {
+  "10代": {
+    morningTV: "行為者率 15.8% (2014年 24.5%)",
+    nightTV: "行為者率 22.5% (2014年 52.4%)",
+    crossover: "17時以降 ネット圧倒（夜61.8%）",
+    tv2014:  [4.2, 1.5, 0.8, 0.4, 0.6, 2.1, 10.5, 24.5, 14.2, 3.1, 2.4, 3.0, 10.2, 3.8, 3.2, 5.5, 12.4, 21.5, 32.0, 44.8, 52.4, 46.2, 31.5, 12.8],
+    tv2024:  [1.2, 0.5, 0.3, 0.1, 0.2, 1.0,  7.2, 15.8,  8.4, 1.2, 0.9, 1.1,  4.1, 1.3, 1.0, 2.0,  4.5,  8.8, 14.2, 19.8, 22.5, 20.1, 13.5,  5.2],
+    net2014: [6.5, 3.0, 1.5, 0.8, 0.9, 2.5,  8.4, 14.2,  8.0, 4.2, 3.8, 4.5, 12.8, 6.2, 5.8, 8.4, 15.2, 24.0, 31.5, 41.0, 48.5, 45.0, 32.4, 16.5],
+    net2024: [9.8, 4.5, 2.2, 1.2, 1.5, 4.2, 12.5, 22.4, 14.8, 8.5, 7.2, 9.1, 18.5, 10.2, 9.8, 15.4, 28.5, 42.1, 48.6, 56.5, 61.8, 59.4, 48.6, 26.2]
+  },
+  "20代": {
+    morningTV: "行為者率 14.2% (2014年 21.8%)",
+    nightTV: "行為者率 21.0% (2014年 46.8%)",
+    crossover: "16時以降 ネット圧倒（夜58.4%）",
+    tv2014:  [6.8, 2.8, 1.2, 0.6, 0.8, 2.5,  9.8, 21.8, 12.5, 3.5, 3.0, 4.2, 14.5, 4.8, 4.1, 6.2, 10.5, 18.2, 28.4, 38.5, 46.8, 42.0, 32.1, 18.2],
+    tv2024:  [1.8, 0.8, 0.4, 0.2, 0.3, 1.2,  6.5, 14.2,  7.8, 1.5, 1.2, 1.8,  6.8, 2.1, 1.8, 2.8,  5.2,  9.4, 13.8, 18.5, 21.0, 18.2, 13.0,  7.0],
+    net2014: [8.5, 4.2, 2.0, 1.0, 1.2, 3.0, 10.2, 18.5, 12.0, 7.5, 7.0, 8.5, 22.4, 11.2, 10.5, 13.8, 20.1, 28.5, 34.2, 42.5, 47.8, 45.2, 35.8, 20.4],
+    net2024: [14.2, 6.8, 3.2, 1.8, 2.1, 5.8, 15.8, 28.5, 20.1, 14.2, 13.5, 16.8, 38.2, 20.5, 19.4, 25.0, 34.8, 43.5, 49.8, 54.2, 58.4, 56.0, 48.2, 31.0]
+  },
+  "30代": {
+    morningTV: "行為者率 23.5% (2014年 31.2%)",
+    nightTV: "行為者率 34.6% (2014年 58.2%)",
+    crossover: "2024年 夜帯でネットが逆転",
+    tv2014:  [5.2, 2.1, 0.9, 0.5, 1.0, 4.2, 15.2, 31.2, 18.5, 6.2, 5.5, 7.1, 18.2, 6.8, 5.8, 8.5, 14.2, 24.5, 38.2, 49.5, 58.2, 52.1, 38.5, 16.8],
+    tv2024:  [2.1, 0.9, 0.4, 0.2, 0.5, 2.8, 11.8, 23.5, 13.2, 3.2, 2.8, 3.9, 11.5, 3.8, 3.2, 4.8,  8.5, 14.8, 22.4, 29.5, 34.6, 31.2, 22.4,  9.5],
+    net2014: [6.2, 2.8, 1.2, 0.6, 0.8, 2.2,  7.5, 14.8, 10.2, 6.5, 6.0, 7.2, 18.5, 9.2, 8.8, 11.2, 16.5, 22.4, 28.0, 34.2, 39.5, 37.0, 28.5, 14.2],
+    net2024: [10.5, 4.8, 2.1, 1.1, 1.4, 4.2, 14.2, 26.5, 19.8, 15.2, 14.0, 17.5, 35.4, 19.8, 18.5, 23.5, 31.2, 38.5, 44.2, 48.5, 51.2, 48.5, 39.5, 22.4]
+  },
+  "40代": {
+    morningTV: "行為者率 31.8% (2014年 38.5%)",
+    nightTV: "行為者率 46.5% (2014年 68.4%)",
+    crossover: "夜帯で差がわずか3.7ptに肉薄",
+    tv2014:  [4.0, 1.5, 0.6, 0.3, 1.2, 5.5, 20.5, 38.5, 22.4, 8.5, 7.5, 9.5, 22.4, 8.8, 7.8, 10.5, 16.8, 28.5, 45.2, 58.5, 68.4, 61.2, 44.5, 16.2],
+    tv2024:  [2.0, 0.8, 0.3, 0.1, 0.6, 3.8, 16.2, 31.8, 18.0, 4.8, 4.1, 5.5, 15.2, 5.2, 4.5,  6.8, 11.5, 19.8, 30.5, 39.5, 46.5, 41.5, 29.5, 10.2],
+    net2014: [3.8, 1.5, 0.6, 0.3, 0.5, 1.5,  5.2, 10.5,  7.2, 4.8, 4.2, 5.5, 14.2, 6.8, 6.5,  8.2, 12.0, 16.5, 20.5, 25.2, 29.5, 27.0, 19.5,  8.5],
+    net2024: [7.8, 3.2, 1.4, 0.7, 0.9, 3.0, 11.2, 21.5, 16.2, 12.5, 11.8, 14.5, 28.5, 15.8, 14.8, 18.5, 24.5, 31.2, 36.5, 40.2, 42.8, 40.5, 31.2, 16.5]
+  },
+  "50代": {
+    morningTV: "行為者率 40.2% (2014年 44.0%)",
+    nightTV: "行為者率 60.1% (2014年 76.5%)",
+    crossover: "朝・夜ともにテレビ優位を堅持",
+    tv2014:  [3.2, 1.1, 0.4, 0.2, 1.5, 7.8, 26.5, 44.0, 26.0, 11.2, 10.0, 12.5, 27.5, 11.5, 10.2, 13.5, 21.0, 34.5, 52.0, 66.5, 76.5, 68.2, 48.0, 16.5],
+    tv2024:  [1.8, 0.6, 0.2, 0.1, 0.9, 6.0, 23.5, 40.2, 23.5,  7.8,  6.8,  8.5, 21.0,  8.2,  7.2,  9.5, 15.8, 26.5, 41.5, 51.5, 60.1, 53.5, 37.0, 11.5],
+    net2014: [2.5, 0.9, 0.3, 0.1, 0.3, 1.0,  3.5,  7.2,  5.0,  3.2,  2.8,  3.8,  9.5,  4.5,  4.2,  5.5,  8.2, 11.5, 14.2, 17.5, 20.8, 18.5, 13.0,  5.5],
+    net2024: [5.2, 2.0, 0.8, 0.4, 0.6, 2.1,  8.5, 16.8, 12.5,  9.2,  8.8, 11.0, 21.5, 11.8, 11.0, 13.8, 18.5, 23.5, 28.0, 31.5, 34.5, 32.0, 23.5, 11.0]
+  }
+};
+
+let currentDaypartAge = "10代";
+let daypartChart = null;
+
+function initDaypartChart() {
+  const ctx = document.getElementById('daypartCanvas');
+  if (!ctx) return;
+
+  const d = daypartData[currentDaypartAge];
+
+  daypartChart = new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: hours24,
+      datasets: [
+        {
+          label: '2024年 テレビ (生放送)',
+          data: d.tv2024,
+          borderColor: '#38bdf8',
+          backgroundColor: 'rgba(56, 189, 248, 0.15)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.5,
+          pointRadius: 2.5,
+          pointHoverRadius: 5
+        },
+        {
+          label: '2014年 テレビ (生放送)',
+          data: d.tv2014,
+          borderColor: '#0284c7',
+          borderDash: [4, 4],
+          backgroundColor: 'transparent',
+          tension: 0.35,
+          borderWidth: 1.5,
+          pointRadius: 1.5
+        },
+        {
+          label: '2024年 ネット利用',
+          data: d.net2024,
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.12)',
+          fill: true,
+          tension: 0.35,
+          borderWidth: 2.5,
+          pointRadius: 2.5,
+          pointHoverRadius: 5
+        },
+        {
+          label: '2014年 ネット利用',
+          data: d.net2014,
+          borderColor: '#b45309',
+          borderDash: [4, 4],
+          backgroundColor: 'transparent',
+          tension: 0.35,
+          borderWidth: 1.5,
+          pointRadius: 1.5
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.95)',
+          titleColor: '#f1f5f9',
+          bodyColor: '#cbd5e1',
+          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: function(context) {
+              return `${context.dataset.label}: ${context.parsed.y.toFixed(1)}%`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'monospace', size: 10 }
+          }
+        },
+        y: {
+          min: 0,
+          max: 80,
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'monospace', size: 10 },
+            callback: value => value + '%'
+          }
+        }
+      }
+    }
+  });
+}
+
+function updateDaypartUI() {
+  const d = daypartData[currentDaypartAge];
+  document.getElementById('chart-subhead').textContent = `${currentDaypartAge}：2014年 vs 2024年 24時間行為者率推移`;
+  document.getElementById('stat-morning').textContent = d.morningTV;
+  document.getElementById('stat-night').textContent = d.nightTV;
+  document.getElementById('stat-crossover').textContent = d.crossover;
+
+  // Button styles
+  document.querySelectorAll('.daypart-age-btn').forEach(btn => {
+    if (btn.getAttribute('data-age') === currentDaypartAge) {
+      btn.className = 'daypart-age-btn px-2.5 py-1 text-xs rounded border border-blue-500/50 bg-blue-500/20 text-blue-300 font-bold';
+    } else {
+      btn.className = 'daypart-age-btn px-2.5 py-1 text-xs rounded border border-white/10 bg-white/5 text-slate-400 hover:text-white';
+    }
+  });
+
+  if (daypartChart) {
+    daypartChart.data.datasets[0].data = d.tv2024;
+    daypartChart.data.datasets[1].data = d.tv2014;
+    daypartChart.data.datasets[2].data = d.net2024;
+    daypartChart.data.datasets[3].data = d.net2014;
+    daypartChart.update();
+  }
+}
+
+function setDaypartAge(age) {
+  currentDaypartAge = age;
+  updateDaypartUI();
+}
+
+function switchTab(tabId) {
+  const tab1Btn = document.getElementById('tab-btn-1');
+  const tab2Btn = document.getElementById('tab-btn-2');
+  const pane1 = document.getElementById('tab-pane-1');
+  const pane2 = document.getElementById('tab-pane-2');
+
+  if (tabId === 'tab1') {
+    tab1Btn.className = 'tab-btn active px-3.5 py-1.5 rounded-lg border border-blue-500/60 bg-blue-500/20 text-blue-300 text-xs font-bold flex items-center gap-2';
+    tab2Btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg border border-white/10 text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2';
+    pane1.classList.remove('hidden');
+    pane2.classList.add('hidden');
+  } else {
+    tab2Btn.className = 'tab-btn active px-3.5 py-1.5 rounded-lg border border-blue-500/60 bg-blue-500/20 text-blue-300 text-xs font-bold flex items-center gap-2';
+    tab1Btn.className = 'tab-btn px-3.5 py-1.5 rounded-lg border border-white/10 text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2';
+    pane2.classList.remove('hidden');
+    pane1.classList.add('hidden');
+
+    if (!daypartChart) {
+      setTimeout(initDaypartChart, 50);
+    } else {
+      setTimeout(() => daypartChart.resize(), 50);
+    }
+  }
+}
+
+// Initial render
 renderHorizontal();
 </script>
 </body>
