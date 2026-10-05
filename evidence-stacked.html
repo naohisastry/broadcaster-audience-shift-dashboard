@@ -55,7 +55,7 @@
           </p>
         </div>
         <div class="text-right whitespace-nowrap pt-1 flex flex-col items-end gap-1">
-          <span class="text-xs font-mono text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">Ver 1.13.0</span>
+          <span class="text-xs font-mono text-slate-400 bg-white/5 border border-white/10 px-2 py-0.5 rounded">Ver 1.15.0</span>
           <span class="text-[10px] font-mono text-slate-500">2026.10</span>
         </div>
       </div>
@@ -68,7 +68,7 @@
         </button>
         <button id="tab-btn-2" onclick="switchTab('tab2')" class="tab-btn px-3.5 py-1.5 rounded-lg border border-white/10 text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 flex items-center gap-2">
           <span>⏰</span>
-          <span>Tab 2: 24時間生活リズム変化（朝・昼・夜の推移カーブ）</span>
+          <span>Tab 2: 24時間生活リズム変化（朝・昼・夜の推移カーブ＆純増減差分）</span>
         </button>
       </div>
     </div>
@@ -222,11 +222,11 @@
         <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 border-b border-white/10 pb-4">
           <div>
             <h2 class="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-              <span>24時間 生活リズムのメディア接触カーブ（時間帯別行為者率）</span>
-              <span class="text-xs font-normal text-slate-400">（平日・1時間刻み）</span>
+              <span>24時間 生活リズムのメディア接触カーブ ＆ 10年純増減</span>
+              <span class="text-xs font-normal text-slate-400">（平日・1時間刻み行為者率）</span>
             </h2>
             <p class="text-xs text-slate-400 mt-0.5">
-              夜のゴールデン帯崩壊と、朝（6〜8時）の生活インフラ残存（テレビ底打ちゾーン）を可視化
+              上段：24時間の接触水準（山と谷） / 下段：10年間で「どこが増え、どこが減ったか」の純差分（±pt）
             </p>
           </div>
 
@@ -271,10 +271,13 @@
           </div>
         </div>
 
-        <!-- 24-Hour Line Chart Container -->
+        <!-- Upper: 24-Hour Line Chart Container (Water Level) -->
         <div class="bg-black/40 rounded-xl p-4 border border-white/5 space-y-2">
           <div class="flex items-center justify-between text-xs text-slate-400 font-mono pb-2 border-b border-white/5">
-            <span id="chart-subhead" class="text-slate-200 font-bold">10代：2014年 vs 2024年 24時間行為者率推移</span>
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded bg-white/10 text-slate-200 text-[10px] font-bold">1. 水準</span>
+              <span id="chart-subhead" class="text-slate-200 font-bold">10代：2014年 vs 2024年 24時間行為者率推移</span>
+            </div>
             <div class="flex items-center gap-3">
               <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-sky-400 inline-block rounded"></span><span class="text-[11px]">2024 TV</span></div>
               <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-sky-700 border-dashed inline-block rounded"></span><span class="text-[11px] text-slate-500">2014 TV</span></div>
@@ -282,8 +285,31 @@
               <div class="flex items-center gap-1.5"><span class="w-3 h-1 bg-amber-800 border-dashed inline-block rounded"></span><span class="text-[11px] text-slate-500">2014 ネット</span></div>
             </div>
           </div>
-          <div class="relative h-80 sm:h-96 w-full">
+          <div class="relative h-64 sm:h-72 w-full">
             <canvas id="daypartCanvas"></canvas>
+          </div>
+        </div>
+
+        <!-- Lower: 10-Year Net Change Diff Bar Chart (Where increased / decreased) -->
+        <div class="bg-black/40 rounded-xl p-4 border border-white/5 space-y-2">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 font-mono pb-2 border-b border-white/5 gap-2">
+            <div class="flex items-center gap-2">
+              <span class="px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">2. 純増減</span>
+              <span id="diff-chart-subhead" class="text-slate-200 font-bold">10代：10年間の増減差分（2024年 − 2014年 ±pt）</span>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 text-[11px]">
+              <div class="flex items-center gap-1.5"><span class="w-3 h-2.5 bg-amber-500 inline-block rounded"></span><span>ネット増減 (±pt)</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-3 h-2.5 bg-sky-500 inline-block rounded"></span><span>テレビ増減 (±pt)</span></div>
+              <div class="flex items-center gap-1.5"><span class="w-4 h-0.5 bg-emerald-400 inline-block rounded"></span><span class="text-emerald-300 font-bold">● 総量純増減 (TV+ネット)</span></div>
+            </div>
+          </div>
+          <div class="relative h-56 sm:h-64 w-full">
+            <canvas id="daypartDiffCanvas"></canvas>
+          </div>
+          <div class="flex flex-wrap items-center justify-between text-[10px] text-slate-500 font-mono px-1 pt-1 gap-2">
+            <span>▲ 折れ線が＋：総量が拡大した時間帯（朝・昼等）</span>
+            <span class="text-slate-400 font-semibold">基準線：±0 pt（ゼロサム＝完全代替境界）</span>
+            <span>▼ 折れ線が−：総量が縮小した時間帯（夜帯の映像離れ等）</span>
           </div>
         </div>
 
@@ -293,10 +319,13 @@
             <span class="text-cyan-400">💡</span> 24時間データから読み解く「40分底打ち」のメカニズム
           </div>
           <p class="leading-relaxed text-slate-400">
-            2014年当時、若者（10代・20代）にとってもテレビは「夜のゴールデン帯（19〜22時）に半分以上が見る娯楽の王様」でした。しかし10年を経て、夜のテレビ行為者率は2割前半へと半減し、ネット（6割超）に完全に圧倒されました。
+            2014年当時、若者（10代・20代）にとってもテレビは「夜のゴールデン帯（19〜22時）に半分以上が見る娯楽の王様」でした。しかし10年を経て、夜のテレビ行為者率は2割前半へと半減（約-30pt）しました。
           </p>
           <p class="leading-relaxed text-slate-400">
-            一方で、<strong class="text-sky-300">朝（6〜8時台）のテレビ視聴は夜ほど急激に落ち込まず、15%前後の行為者率を維持</strong>しています。その結果、現在若者がテレビを見る時間（約40分）の約半分は、夜ではなく「朝の身支度・時計代わりの生活インフラ」として機能していることが24時間データから裏付けられます。
+            ここで注目すべきは、ネット動画が伸びた（約+15pt）にもかかわらず、<strong class="text-emerald-300">夜帯の映像総量ライン（緑の線）はマイナスに沈んでいる点</strong>です。夜の可処分時間は、ネット動画のみならずSNS・ゲーム・情報探索といった多様なインターネット利用や他行動へと分散し、映像接触そのものの独占が崩壊しました。
+          </p>
+          <p class="leading-relaxed text-slate-400">
+            一方で、<strong class="text-sky-300">朝（6〜8時台）のテレビ視聴はわずか-8.7ptの減少にとどまり、15%前後の行為者率を維持</strong>しています。ネット動画の利用増が加わったことで、朝の映像総量ラインはプラス（約+6pt）に浮上しています。その結果、現在若者がテレビを見る時間（約40分）の約半分は、夜の娯楽ではなく「朝の身支度・時計代わりの生活インフラ」として機能していることが24時間データから裏付けられます。
           </p>
         </div>
 
@@ -642,10 +671,120 @@ function initDaypartChart() {
     }
   });
 }
+let daypartDiffChart = null;
+
+function calculateDiffs(d) {
+  const tvDiff = d.tv2024.map((val, idx) => Number((val - d.tv2014[idx]).toFixed(1)));
+  const netDiff = d.net2024.map((val, idx) => Number((val - d.net2014[idx]).toFixed(1)));
+  const totalDiff = tvDiff.map((tv, idx) => Number((tv + netDiff[idx]).toFixed(1)));
+  return { tvDiff, netDiff, totalDiff };
+}
+
+function initDaypartDiffChart() {
+  const ctx = document.getElementById('daypartDiffCanvas');
+  if (!ctx) return;
+
+  const d = daypartData[currentDaypartAge];
+  const { tvDiff, netDiff, totalDiff } = calculateDiffs(d);
+
+  daypartDiffChart = new Chart(ctx, {
+    data: {
+      labels: hours24,
+      datasets: [
+        {
+          type: 'line',
+          label: '総量純増減 (TV+ネット)',
+          data: totalDiff,
+          borderColor: '#10b981',
+          backgroundColor: '#10b981',
+          borderWidth: 2.5,
+          pointRadius: 3.5,
+          pointHoverRadius: 6,
+          pointBackgroundColor: '#10b981',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 1.5,
+          tension: 0.25,
+          order: 1
+        },
+        {
+          type: 'bar',
+          label: 'ネット増減 (±pt)',
+          data: netDiff,
+          backgroundColor: 'rgba(245, 158, 11, 0.75)',
+          borderColor: '#f59e0b',
+          borderWidth: 1,
+          borderRadius: 3,
+          order: 2
+        },
+        {
+          type: 'bar',
+          label: 'テレビ増減 (±pt)',
+          data: tvDiff,
+          backgroundColor: 'rgba(56, 189, 248, 0.75)',
+          borderColor: '#38bdf8',
+          borderWidth: 1,
+          borderRadius: 3,
+          order: 3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      interaction: {
+        mode: 'index',
+        intersect: false
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          backgroundColor: 'rgba(15, 23, 42, 0.95)',
+          titleColor: '#f1f5f9',
+          bodyColor: '#cbd5e1',
+          borderColor: 'rgba(255, 255, 255, 0.15)',
+          borderWidth: 1,
+          padding: 10,
+          callbacks: {
+            label: function(context) {
+              const val = context.parsed.y;
+              const sign = val > 0 ? '+' : '';
+              return `${context.dataset.label}: ${sign}${val.toFixed(1)} pt`;
+            }
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            color: 'rgba(255, 255, 255, 0.05)'
+          },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'monospace', size: 10 }
+          }
+        },
+        y: {
+          grid: {
+            color: context => context.tick.value === 0 ? 'rgba(255, 255, 255, 0.35)' : 'rgba(255, 255, 255, 0.05)',
+            lineWidth: context => context.tick.value === 0 ? 1.5 : 1
+          },
+          ticks: {
+            color: '#94a3b8',
+            font: { family: 'monospace', size: 10 },
+            callback: value => (value > 0 ? '+' : '') + value + 'pt'
+          }
+        }
+      }
+    }
+  });
+}
 
 function updateDaypartUI() {
   const d = daypartData[currentDaypartAge];
   document.getElementById('chart-subhead').textContent = `${currentDaypartAge}：2014年 vs 2024年 24時間行為者率推移`;
+  document.getElementById('diff-chart-subhead').textContent = `${currentDaypartAge}：10年間の増減差分（2024年 − 2014年 ±pt）`;
   document.getElementById('stat-morning').textContent = d.morningTV;
   document.getElementById('stat-night').textContent = d.nightTV;
   document.getElementById('stat-crossover').textContent = d.crossover;
@@ -665,6 +804,14 @@ function updateDaypartUI() {
     daypartChart.data.datasets[2].data = d.net2024;
     daypartChart.data.datasets[3].data = d.net2014;
     daypartChart.update();
+  }
+
+  if (daypartDiffChart) {
+    const { tvDiff, netDiff, totalDiff } = calculateDiffs(d);
+    daypartDiffChart.data.datasets[0].data = totalDiff;
+    daypartDiffChart.data.datasets[1].data = netDiff;
+    daypartDiffChart.data.datasets[2].data = tvDiff;
+    daypartDiffChart.update();
   }
 }
 
@@ -694,6 +841,12 @@ function switchTab(tabId) {
       setTimeout(initDaypartChart, 50);
     } else {
       setTimeout(() => daypartChart.resize(), 50);
+    }
+
+    if (!daypartDiffChart) {
+      setTimeout(initDaypartDiffChart, 60);
+    } else {
+      setTimeout(() => daypartDiffChart.resize(), 60);
     }
   }
 }
