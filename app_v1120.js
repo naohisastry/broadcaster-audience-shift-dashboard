@@ -603,6 +603,7 @@
     table(document.querySelector('[data-fig="fig3_2"] .fig-table'), ['会社', '2021→2025年', '2023→2025年', 'リニアの金額（起点→2025年）'],
       rows.map(r => { const o = r.o; const s = at(o, r.v4 != null ? 2021 : 2023), e = at(o, 2025); return [o.name, r.v4 == null ? '―' : fmtP(r.v4), fmtP(r.v2), `${money(o, s.lin, false)} → ${money(o, e.lin, false)}`]; })
         .concat([['日本・地上波のみ', fmtP(+((jp.terrestrial[5] / jp.terrestrial[1] - 1) * 100).toFixed(1)), fmtP(+((jp.terrestrial[5] / jp.terrestrial[3] - 1) * 100).toFixed(1)), `${fmt(jp.terrestrial[1], 0)}億円 → ${fmt(jp.terrestrial[5], 0)}億円`]]));
+    document.querySelector('[data-fig="fig3_2"] .fig-derived').textContent = '※ 本稿の補完率でITVに用いた2022→2025年では、ITVのリニア広告は−25.5%です。';
   }
 
   function fig3_3() {
