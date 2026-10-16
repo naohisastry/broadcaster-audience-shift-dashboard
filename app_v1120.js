@@ -552,7 +552,7 @@
       options: baseOptions({
         indexAxis: 'y',
         interaction: { mode: 'nearest', axis: 'y', intersect: false },
-        layout: { padding: { right: narrow() ? 58 : 275 } },
+        layout: { padding: { left: 24, right: narrow() ? 58 : 275 } },
         plugins: Object.assign(baseOptions().plugins, {
           tooltip: Object.assign(baseOptions().plugins.tooltip, {
             filter: (x) => !rows[x.dataIndex].head,
@@ -564,6 +564,7 @@
         scales: {
           x: Object.assign(baseOptions().scales.x, { stacked: true, min: 0, max: 100, grid: { color: c.grid }, title: { display: true, text: 'リニア広告の減少額＝100' }, ticks: { callback: v => v + '%' } }),
           y: Object.assign(baseOptions().scales.y, { stacked: true, grid: { display: false },
+            afterFit: (axis) => { axis.width += 50; },
             ticks: { color: (ctx) => rows[ctx.index] && rows[ctx.index].head ? c.s2 : c.text,
                      font: (ctx) => rows[ctx.index] && rows[ctx.index].head ? { weight: 'bold' } : { weight: 'normal' } } })
         }
